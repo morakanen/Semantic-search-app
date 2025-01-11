@@ -20,8 +20,8 @@ function displayTopResults(scores) {
 
     topScores.forEach(({ index, similarity }) => {
         const originalItem = dataset[index];
-        const title = originalItem.title || "No Title Available"; // Replace 'content' with your title field
-        const author = originalItem.creator || "Unknown Author";   // Replace 'creator' with your author field
+        const title = originalItem.title || "No Title Available"; 
+        const author = originalItem.creator || "Unknown Author";   
 
         const resultItem = document.createElement("p");
         resultItem.textContent = `Title: ${title}, Author: ${author} (Similarity: ${similarity.toFixed(2)})`;
@@ -82,8 +82,8 @@ async function handleSearch() {
     const scores = [];
     for (let i = 0; i < datasetEmbeddings.length; i++) {
         const similarity = cosineSimilarity(
-            tf.tensor(queryEmbedding.arraySync()[0]), // Convert query tensor to array and back
-            tf.tensor(datasetEmbeddings[i]) // Use individual embeddings
+            tf.tensor(queryEmbedding.arraySync()[0]), // Converts query tensor to array and back
+            tf.tensor(datasetEmbeddings[i]) // Uses individual embeddings
         );
         scores.push({ index: i, similarity });
     }
@@ -100,8 +100,8 @@ async function handleSearch() {
     resultsDiv.innerHTML = "<h2>Results:</h2>";
     topScores.forEach(({ index, similarity }) => {
         const originalItem = dataset[index];
-        const title = originalItem.title || "No Title Available"; // Replace 'content' with your title field
-        const author = originalItem.creator || "Unknown Author";   // Replace 'creator' with your author field
+        const title = originalItem.title || "No Title Available"; 
+        const author = originalItem.creator || "Unknown Author";   
 
         const resultItem = document.createElement("p");
         resultItem.textContent = `Title: ${title}, Author: ${author} (Similarity: ${similarity.toFixed(2)})`;
