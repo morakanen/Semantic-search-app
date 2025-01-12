@@ -1,8 +1,7 @@
-// Declare global variables
 let model; // Universal Sentence Encoder model
 let dataset = []; // Dataset array
 let datasetEmbeddings; // Array of embeddings with precomputed magnitudes
-const TOP_N = 10; // Number of top results to display
+const TOP_N = 10; 
 
 // Fetch dataset from JSON file
 async function fetchDataset() {
@@ -16,16 +15,16 @@ async function fetchDataset() {
 function displayTopResults(scores) {
     const topScores = scores.slice(0, TOP_N); // Select top N scores
     const resultsDiv = document.getElementById("results");
-    resultsDiv.innerHTML = "<h2>Results:</h2>"; // Add header for results
+    resultsDiv.innerHTML = "<h2>Results:</h2>"; 
 
     topScores.forEach(({ index, similarity }) => {
-        const originalItem = dataset[index]; // Retrieve original dataset item
+        const originalItem = dataset[index]; 
         const title = originalItem.title || "No Title Available"; // Title fallback
         const author = originalItem.creator || "Unknown Author"; // Author fallback
 
-        const resultItem = document.createElement("p"); // Create a result element
+        const resultItem = document.createElement("p"); 
         resultItem.textContent = `Title: ${title}, Author: ${author} (Similarity: ${similarity.toFixed(2)})`;
-        resultsDiv.appendChild(resultItem); // Append result to resultsDiv
+        resultsDiv.appendChild(resultItem); 
     });
 
     if (topScores.length === 0) {
@@ -38,18 +37,18 @@ async function encodeDataset() {
     console.log("Encoding dataset...");
     const contents = dataset
         .map(item => item.content || item.description || "")
-        .filter(content => content.trim() !== ""); // Ensure only valid content
+        .filter(content => content.trim() !== ""); 
 
     if (contents.length === 0) {
         throw new Error("No valid content to encode in the dataset.");
     }
 
-    datasetEmbeddings = []; // Initialize the embeddings array
-    const batchSize = 100; // Batch size for encoding to avoid memory issues
+    datasetEmbeddings = [];
+    const batchSize = 100; 
 
     for (let i = 0; i < contents.length; i += batchSize) {
-        const batch = contents.slice(i, i + batchSize); // Create a batch
-        const batchEmbeddings = await model.embed(batch); // Encode the batch
+        const batch = contents.slice(i, i + batchSize); 
+        const batchEmbeddings = await model.embed(batch); 
 
         const embeddingsWithMagnitudes = batchEmbeddings.arraySync().map(embedding => {
             const magnitude = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0)); // Precompute magnitude
@@ -66,12 +65,12 @@ async function encodeDataset() {
 // Load the model and prepare the dataset embeddings
 async function loadModelAndPrepareDataset() {
     console.log("Loading Universal Sentence Encoder model...");
-    model = await use.load(); // Load the Universal Sentence Encoder model
+    model = await use.load(); 
     console.log("Model loaded successfully!");
 
     console.log("Fetching and preparing dataset...");
-    await fetchDataset(); // Fetch the dataset
-    await loadDatasetEmbeddings(); // Load or encode dataset embeddings
+    await fetchDataset(); 
+    await loadDatasetEmbeddings(); 
 }
 
 // Load dataset embeddings from IndexedDB or encode them if not cached
