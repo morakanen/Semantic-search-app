@@ -1,3 +1,4 @@
+
 let model; // Universal Sentence Encoder model
 let dataset = []; // Dataset array
 let datasetEmbeddings; // Array of embeddings with precomputed magnitudes
