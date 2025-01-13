@@ -180,58 +180,81 @@ function displayTopResults(scores) {
         const originalItem = dataset[index];
         const title = originalItem.title || "No Title Available";
         const author = originalItem.creator || "Unknown Author";
-
-        // Creates a card container
+        const link = originalItem.link || "#";
+    
+        // Create the card container
         const card = document.createElement("div");
-        card.className = "result-card"; // Adds CSS class for styling
-        card.style.border = "1px solid #ccc";
-        card.style.margin = "10px";
-        card.style.padding = "15px";
-        card.style.borderRadius = "8px";
-        card.style.cursor = "pointer";
-        card.style.transition = "0.3s all ease";
-        card.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
-
-        // Adds initial content (title and author)
+        card.className = "result-card";
+    
+        // Add the title
         const cardTitle = document.createElement("h3");
-        cardTitle.textContent = `Title: ${title}`;
+        cardTitle.textContent = title;
+        cardTitle.className = "title";
         card.appendChild(cardTitle);
-
+    
+        // Add the author
         const cardAuthor = document.createElement("p");
         cardAuthor.textContent = `Author: ${author}`;
+        cardAuthor.className = "author";
         card.appendChild(cardAuthor);
-
+    
+        // Add the similarity score
         const similarityScore = document.createElement("p");
         similarityScore.textContent = `Similarity: ${similarity.toFixed(2)}`;
+        similarityScore.className = "similarity";
         card.appendChild(similarityScore);
-
-        // Adds hidden section for metadata
+    
+        // Add the link
+        const cardLink = document.createElement("div");
+        cardLink.className = "links";
+        const linkElement = document.createElement("a");
+        linkElement.href = link;
+        linkElement.target = "_blank";
+    
+        // Shorten the displayed link text if it's too long
+        const maxLength = 30; // Maximum length of the displayed link
+        const shortenedLinkText = link.length > maxLength
+            ? link.substring(0, maxLength - 3) + "..." // Add ellipsis for long links
+            : link;
+    
+        linkElement.textContent = shortenedLinkText; // Display shortened text
+        linkElement.title = link; // Show full URL on hover as a tooltip
+        cardLink.appendChild(linkElement);
+        card.appendChild(cardLink);
+    
+        // Add hidden metadata
         const additionalInfo = document.createElement("div");
-        additionalInfo.style.display = "none"; // Initially hidden
-        additionalInfo.style.marginTop = "10px";
-
-        // Populates the hidden section with all metadata fields
-        Object.keys(originalItem).forEach(key => {
+        additionalInfo.className = "additional-info collapsed"; // Initially collapsed
+        additionalInfo.style.maxHeight = "0px"; // Start with 0 height
+        Object.keys(originalItem).forEach((key) => {
             const value = originalItem[key];
-            if (value) {
+            if (value && key !== "title" && key !== "creator" && key !== "link") {
                 const infoLine = document.createElement("p");
                 infoLine.textContent = `${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`;
                 additionalInfo.appendChild(infoLine);
             }
         });
-
         card.appendChild(additionalInfo);
-
-        // Toggles visibility of metadata when the card is clicked
+    
+        // Add toggle functionality
         card.addEventListener("click", () => {
-            additionalInfo.style.display =
-                additionalInfo.style.display === "none" ? "block" : "none";
+            if (additionalInfo.classList.contains("collapsed")) {
+                additionalInfo.style.maxHeight = `${additionalInfo.scrollHeight}px`;
+                additionalInfo.classList.remove("collapsed");
+                additionalInfo.classList.add("expanded");
+            } else {
+                additionalInfo.style.maxHeight = "0px";
+                additionalInfo.classList.remove("expanded");
+                additionalInfo.classList.add("collapsed");
+            }
         });
-
-        // Adds the card to the results container
+    
+        // Append the card to the results container
         resultsDiv.appendChild(card);
     });
+    
 }
+
 
 // Encode the dataset into embeddings with magnitudes
 async function encodeDataset() {
@@ -446,12 +469,25 @@ document.getElementById("translateButton").addEventListener("click", async () =>
 document.addEventListener('DOMContentLoaded', () => {
     const toggleThemeButton = document.getElementById('toggleThemeButton');
     toggleThemeButton.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        toggleThemeButton.textContent = document.body.classList.contains('dark-mode') 
-            ? 'Switch to Light Mode' 
+        const isDarkMode = document.body.classList.toggle('dark-mode');
+        const cards = document.querySelectorAll('.result-card');
+
+        // Toggle dark mode class for all result cards
+        cards.forEach((card) => {
+            if (isDarkMode) {
+                card.classList.add('dark-mode');
+            } else {
+                card.classList.remove('dark-mode');
+            }
+        });
+
+        // Update button text
+        toggleThemeButton.textContent = isDarkMode
+            ? 'Switch to Light Mode'
             : 'Switch to Dark Mode';
     });
 });
+
 
 
 
@@ -516,13 +552,22 @@ function renderHistory() {
 
 
 historyButton.addEventListener('click', () => {
-    const isVisible = historyDropdown.classList.contains('visible');
-    historyDropdown.classList.toggle('visible', !isVisible);
-
-    if (!isVisible) {
-        renderHistory(); // Render the history list when opening
+    if (historyDropdown.classList.contains('visible')) {
+        // Hide the dropdown
+        historyDropdown.classList.remove('visible');
+        setTimeout(() => {
+            historyDropdown.style.display = 'none'; // Fully hide after animation
+        }, 300); // Match the CSS transition duration
+    } else {
+        // Show the dropdown
+        historyDropdown.style.display = 'flex'; // Make dropdown visible
+        setTimeout(() => {
+            historyDropdown.classList.add('visible'); // Trigger slide-in animation
+        }, 10); // Small delay to ensure display is applied
+        renderHistory(); // Render history list when opening
     }
 });
+
 
 clearHistoryButton.addEventListener('click', () => {
     searchHistory = []; // Clear the history array
