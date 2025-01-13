@@ -7,8 +7,8 @@ const TOP_N = 10;
 // Fetch dataset from JSON file
 async function fetchDataset() {
     console.log("Fetching dataset...");
-    const response = await fetch("dataset.json"); 
-    dataset = await response.json(); 
+    const response = await fetch("dataset.json"); // Fetch dataset from a file
+    dataset = await response.json(); // Parse the dataset
     console.log("Dataset fetched successfully!");
 }
 async function clearOldEmbeddings() {
@@ -21,16 +21,16 @@ async function clearOldEmbeddings() {
         request.onerror = event => reject(event.target.error);
     });
 }
-// Displays the top N results based on similarity scores
+// Display the top N results based on similarity scores
 function displayTopResults(scores) {
-    const topScores = scores.slice(0, TOP_N); // Selects top N scores
+    const topScores = scores.slice(0, TOP_N); // Select top N scores
     const resultsDiv = document.getElementById("results");
     resultsDiv.innerHTML = "<h2>Results:</h2>"; 
 
     topScores.forEach(({ index, similarity }) => {
         const originalItem = dataset[index]; 
-        const title = originalItem.title || "No Title Available"; 
-        const author = originalItem.creator || "Unknown Author"; 
+        const title = originalItem.title || "No Title Available"; // Title fallback
+        const author = originalItem.creator || "Unknown Author"; // Author fallback
 
         const resultItem = document.createElement("p"); 
         resultItem.textContent = `Title: ${title}, Author: ${author} (Similarity: ${similarity.toFixed(2)})`;
@@ -38,50 +38,40 @@ function displayTopResults(scores) {
     });
 
     if (topScores.length === 0) {
-        resultsDiv.innerHTML += "<p>No relevant results found.</p>"; // Handles no results case
+        resultsDiv.innerHTML += "<p>No relevant results found.</p>"; // Handle no results case
     }
 }
 
 // Encode the dataset into embeddings with magnitudes
 async function encodeDataset() {
     console.log("Encoding dataset...");
+    const contents = dataset
+        .map(item => item.content || item.description || "")
+        .filter(content => content.trim() !== ""); 
 
-// Combine relevant fields into a single string for embedding
-const contents = dataset
-.map(item => {
-    const metadata = [
-        item.title || "",             
-        (item.keywords || []).join(" "), 
-        item.creator || "",           
-        item.content || "",           
-        item.description || ""        
-    ];
-    return metadata.join(" ").trim(); 
-})
-.filter(content => content !== ""); 
+    if (contents.length === 0) {
+        throw new Error("No valid content to encode in the dataset.");
+    }
 
-if (contents.length === 0) {
-throw new Error("No valid content to encode in the dataset.");
+    datasetEmbeddings = [];
+    const batchSize = 100; 
+
+    for (let i = 0; i < contents.length; i += batchSize) {
+        const batch = contents.slice(i, i + batchSize); 
+        const batchEmbeddings = await model.embed(batch); 
+
+        const embeddingsWithMagnitudes = batchEmbeddings.arraySync().map(embedding => {
+            const magnitude = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0)); // Precompute magnitude
+            return { embedding, magnitude };
+        });
+
+        datasetEmbeddings.push(...embeddingsWithMagnitudes); // Add embeddings to the array
+        console.log(`Encoded batch ${Math.ceil(i / batchSize) + 1}/${Math.ceil(contents.length / batchSize)}`);
+    }
+
+    console.log("Dataset encoded!");
 }
 
-datasetEmbeddings = [];
-const batchSize = 100; // Process in batches for large datasets
-
-for (let i = 0; i < contents.length; i += batchSize) {
-const batch = contents.slice(i, i + batchSize);
-const batchEmbeddings = await model.embed(batch);
-
-const embeddingsWithMagnitudes = batchEmbeddings.arraySync().map(embedding => {
-    const magnitude = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0)); // Precompute magnitude
-    return { embedding, magnitude };
-});
-
-datasetEmbeddings.push(...embeddingsWithMagnitudes); // Add embeddings to the array
-console.log(`Encoded batch ${Math.ceil(i / batchSize) + 1}/${Math.ceil(contents.length / batchSize)}`);
-}
-
-console.log("Dataset encoded!");
-}
 // Load the model and prepare the dataset embeddings
 async function loadModelAndPrepareDataset() {
     console.log("Loading Universal Sentence Encoder model...");
@@ -185,7 +175,7 @@ document.getElementById("searchButton").addEventListener("click", handleSearch);
 // Initialize application on page load
 (async function initialize() {
     try {
-        //await clearOldEmbeddings()
+        await clearOldEmbeddings()
         await loadModelAndPrepareDataset(); // Load model and prepare dataset
     } catch (error) {
         console.error("Error initializing application:", error.message);
