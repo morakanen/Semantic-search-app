@@ -1,4 +1,4 @@
-// Declare global variables
+// Declares global variables
 let model; // Universal Sentence Encoder model
 let dataset = []; // Dataset array
 let datasetEmbeddings; // Array of embeddings with precomputed magnitudes
@@ -231,7 +231,7 @@ async function clearOldEmbeddings() {
         request.onerror = event => reject(event.target.error);
     });
 }
-// Displays the top N results based on similarity scores
+
 function displayTopResults(scores) {
     const topScores = scores.slice(0, TOP_N); // Selects top N scores
     const resultsDiv = document.getElementById("results");
@@ -668,7 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Initialize application on page load
 (async function initialize() {
     try {
-        await clearOldEmbeddings()
+        //await clearOldEmbeddings()
         await loadModelAndPrepareDataset(); // Load model and prepare dataset
     } catch (error) {
         console.error("Error initializing application:", error.message);
