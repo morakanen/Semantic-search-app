@@ -654,5 +654,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
         console.error("Error initializing application:", error.message);
         alert("Failed to initialize application. Check the console for more details.");
+    }finally{
+        preloader.style.display = 'none'; // Hide preloader once done
     }
 })();
