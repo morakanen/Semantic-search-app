@@ -1,4 +1,4 @@
-
+// Declare global variables
 let model; // Universal Sentence Encoder model
 let dataset = []; // Dataset array
 let datasetEmbeddings; // Array of embeddings with precomputed magnitudes
@@ -41,62 +41,128 @@ window.addEventListener('scroll', handleScroll);
 // Fetch dataset from JSON file
 async function fetchDataset() {
     console.log("Fetching dataset...");
-    const response = await fetch("dataset.json"); // Fetch dataset from a file
-    dataset = await response.json(); // Parse the dataset
+    const response = await fetch("dataset.json"); 
+    dataset = await response.json(); 
     console.log("Dataset fetched successfully!");
 }
-
-// Display the top N results based on similarity scores
-function displayTopResults(scores) {
-    const topScores = scores.slice(0, TOP_N); // Select top N scores
-    const resultsDiv = document.getElementById("results");
-    resultsDiv.innerHTML = "<h2>Results:</h2>"; 
-
-    topScores.forEach(({ index, similarity }) => {
-        const originalItem = dataset[index]; 
-        const title = originalItem.title || "No Title Available"; // Title fallback
-        const author = originalItem.creator || "Unknown Author"; // Author fallback
-
-        const resultItem = document.createElement("p"); 
-        resultItem.textContent = `Title: ${title}, Author: ${author} (Similarity: ${similarity.toFixed(2)})`;
-        resultsDiv.appendChild(resultItem); 
+async function clearOldEmbeddings() {
+    const db = await openDatabase();
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction("embeddings", "readwrite");
+        const store = transaction.objectStore("embeddings");
+        const request = store.clear(); // Clears all old embeddings
+        request.onsuccess = () => resolve();
+        request.onerror = event => reject(event.target.error);
     });
+}
+// Displays the top N results based on similarity scores
+function displayTopResults(scores) {
+    const topScores = scores.slice(0, TOP_N); // Selects top N scores
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = "<h2>Results:</h2>";
 
     if (topScores.length === 0) {
-        resultsDiv.innerHTML += "<p>No relevant results found.</p>"; // Handle no results case
+        resultsDiv.innerHTML += "<p>No relevant results found.</p>";
+        return;
     }
+
+    topScores.forEach(({ index, similarity }) => {
+        const originalItem = dataset[index];
+        const title = originalItem.title || "No Title Available";
+        const author = originalItem.creator || "Unknown Author";
+
+        // Creates a card container
+        const card = document.createElement("div");
+        card.className = "result-card"; // Adds CSS class for styling
+        card.style.border = "1px solid #ccc";
+        card.style.margin = "10px";
+        card.style.padding = "15px";
+        card.style.borderRadius = "8px";
+        card.style.cursor = "pointer";
+        card.style.transition = "0.3s all ease";
+        card.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
+
+        // Adds initial content (title and author)
+        const cardTitle = document.createElement("h3");
+        cardTitle.textContent = `Title: ${title}`;
+        card.appendChild(cardTitle);
+
+        const cardAuthor = document.createElement("p");
+        cardAuthor.textContent = `Author: ${author}`;
+        card.appendChild(cardAuthor);
+
+        const similarityScore = document.createElement("p");
+        similarityScore.textContent = `Similarity: ${similarity.toFixed(2)}`;
+        card.appendChild(similarityScore);
+
+        // Adds hidden section for metadata
+        const additionalInfo = document.createElement("div");
+        additionalInfo.style.display = "none"; // Initially hidden
+        additionalInfo.style.marginTop = "10px";
+
+        // Populates the hidden section with all metadata fields
+        Object.keys(originalItem).forEach(key => {
+            const value = originalItem[key];
+            if (value) {
+                const infoLine = document.createElement("p");
+                infoLine.textContent = `${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`;
+                additionalInfo.appendChild(infoLine);
+            }
+        });
+
+        card.appendChild(additionalInfo);
+
+        // Toggles visibility of metadata when the card is clicked
+        card.addEventListener("click", () => {
+            additionalInfo.style.display =
+                additionalInfo.style.display === "none" ? "block" : "none";
+        });
+
+        // Adds the card to the results container
+        resultsDiv.appendChild(card);
+    });
 }
 
 // Encode the dataset into embeddings with magnitudes
 async function encodeDataset() {
     console.log("Encoding dataset...");
-    const contents = dataset
-        .map(item => item.content || item.description || "")
-        .filter(content => content.trim() !== ""); 
 
-    if (contents.length === 0) {
-        throw new Error("No valid content to encode in the dataset.");
-    }
+// Combine relevant fields into a single string for embedding
+const contents = dataset
+.map(item => {
+    const metadata = [
+        item.title || "",             
+        (item.keywords || []).join(" "), 
+        item.creator || "",           
+        item.content || "",           
+        item.description || ""        
+    ];
+    return metadata.join(" ").trim(); 
+})
+.filter(content => content !== ""); 
 
-    datasetEmbeddings = [];
-    const batchSize = 100; 
-
-    for (let i = 0; i < contents.length; i += batchSize) {
-        const batch = contents.slice(i, i + batchSize); 
-        const batchEmbeddings = await model.embed(batch); 
-
-        const embeddingsWithMagnitudes = batchEmbeddings.arraySync().map(embedding => {
-            const magnitude = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0)); // Precompute magnitude
-            return { embedding, magnitude };
-        });
-
-        datasetEmbeddings.push(...embeddingsWithMagnitudes); // Add embeddings to the array
-        console.log(`Encoded batch ${Math.ceil(i / batchSize) + 1}/${Math.ceil(contents.length / batchSize)}`);
-    }
-
-    console.log("Dataset encoded!");
+if (contents.length === 0) {
+throw new Error("No valid content to encode in the dataset.");
 }
 
+datasetEmbeddings = [];
+const batchSize = 100; // Process in batches for large datasets
+
+for (let i = 0; i < contents.length; i += batchSize) {
+const batch = contents.slice(i, i + batchSize);
+const batchEmbeddings = await model.embed(batch);
+
+const embeddingsWithMagnitudes = batchEmbeddings.arraySync().map(embedding => {
+    const magnitude = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0)); // Precompute magnitude
+    return { embedding, magnitude };
+});
+
+datasetEmbeddings.push(...embeddingsWithMagnitudes); // Add embeddings to the array
+console.log(`Encoded batch ${Math.ceil(i / batchSize) + 1}/${Math.ceil(contents.length / batchSize)}`);
+}
+
+console.log("Dataset encoded!");
+}
 // Load the model and prepare the dataset embeddings
 async function loadModelAndPrepareDataset() {
     console.log("Loading Universal Sentence Encoder model...");
@@ -388,6 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Initialize application on page load
 (async function initialize() {
     try {
+        await clearOldEmbeddings()
         await loadModelAndPrepareDataset(); // Load model and prepare dataset
     } catch (error) {
         console.error("Error initializing application:", error.message);
