@@ -4,6 +4,8 @@ let dataset = []; // Dataset array
 let datasetEmbeddings; // Array of embeddings with precomputed magnitudes
 const TOP_N = 10; 
 
+let currentPage = 1;
+const RESULTS_PER_PAGE = 10;
 
 document.querySelectorAll('button').forEach((button) => {
     button.addEventListener('click', (e) => {
@@ -38,6 +40,114 @@ header.addEventListener('click', () => {
 
 window.addEventListener('scroll', handleScroll);
 
+function displayPaginatedResults(scores) {
+    console.log("Displaying paginated results for page:", currentPage);
+
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = "<h2></h2>";
+
+    const topResults = scores.slice(0, 10); // First 10 results
+    const remainingResults = scores.slice(10); // Results after the first 10
+
+    let currentResults = [];
+    let offset = 0; // Define offset here to make it globally accessible
+
+    if (currentPage === 1) {
+        // Shows top 10 results on the first page
+        resultsDiv.innerHTML += "<h2>Top ten</h2>";
+        currentResults = topResults;
+        offset = 0; // No additional offset for the first page
+    } else {
+        // Show paginated results from the remaining scores
+        const startIndex = (currentPage - 2) * RESULTS_PER_PAGE;
+        const endIndex = startIndex + RESULTS_PER_PAGE;
+        currentResults = remainingResults.slice(startIndex, endIndex);
+        offset = 10 + (currentPage - 2) * RESULTS_PER_PAGE; // Offset starts after top 10
+    }
+
+    if (currentResults.length === 0) {
+        resultsDiv.innerHTML += "<p>No relevant results found.</p>";
+        return;
+    }
+
+    currentResults.forEach(({ index, similarity }, resultIndex) => {
+        const originalItem = dataset[index];
+        const title = originalItem.title || "No Title Available";
+        const author = originalItem.creator || "Unknown Author";
+
+        const card = document.createElement("div");
+        card.className = "result-card";
+        card.style.border = "1px solid #ccc";
+        card.style.margin = "10px";
+        card.style.padding = "15px";
+        card.style.borderRadius = "8px";
+
+        // Adds numbering
+        const resultNumber = document.createElement("h3");
+        resultNumber.textContent = `#${offset + resultIndex + 1}`; // Calculate the result number
+        card.appendChild(resultNumber);
+
+        // Adds title and author
+        const cardTitle = document.createElement("h3");
+        cardTitle.textContent = `Title: ${title}`;
+        card.appendChild(cardTitle);
+
+        const cardAuthor = document.createElement("p");
+        cardAuthor.textContent = `Author: ${author}`;
+        card.appendChild(cardAuthor);
+
+        const similarityScore = document.createElement("p");
+        similarityScore.textContent = `Similarity: ${similarity.toFixed(2)}`;
+        card.appendChild(similarityScore);
+
+        resultsDiv.appendChild(card);
+    });
+
+    updatePaginationControls(scores); // Updates the pagination controls
+}
+
+function updatePaginationControls(scores) {
+    const paginationControls = document.getElementById("paginationControls");
+
+    if (!paginationControls) {
+        console.error("Pagination controls container not found in the DOM.");
+        return;
+    }
+    console.log("Pagination controls container found. Updating controls...");
+
+    const totalPages = Math.ceil((scores.length - 10) / RESULTS_PER_PAGE) + 1; // Total pages including top 10
+    paginationControls.innerHTML = ""; // Clear previous controls
+
+    // Create Previous Button
+    const prevButton = document.createElement("button");
+    prevButton.textContent = "Previous";
+    if (currentPage == 1) {
+        prevButton.style.visibility = "hidden";
+    }
+    prevButton.disabled = currentPage === 1; // Disable on the first page
+    prevButton.onclick = () => {
+        if (currentPage > 1) {
+            currentPage--;
+            displayPaginatedResults(scores);
+        }
+    };
+    paginationControls.appendChild(prevButton);
+
+    // Create Next Button
+    const nextButton = document.createElement("button");
+    nextButton.textContent = "Next";
+    nextButton.disabled = currentPage >= totalPages; // Disable on the last page
+    nextButton.onclick = () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            displayPaginatedResults(scores);
+        }
+    };
+    paginationControls.appendChild(nextButton);
+
+    console.log("Pagination controls updated.");
+}
+
 // Fetch dataset from JSON file
 async function fetchDataset() {
     console.log("Fetching dataset...");
@@ -59,7 +169,7 @@ async function clearOldEmbeddings() {
 function displayTopResults(scores) {
     const topScores = scores.slice(0, TOP_N); // Selects top N scores
     const resultsDiv = document.getElementById("results");
-    resultsDiv.innerHTML = "<h2>Results:</h2>";
+    resultsDiv.innerHTML = "<h2></h2>";
 
     if (topScores.length === 0) {
         resultsDiv.innerHTML += "<p>No relevant results found.</p>";
@@ -257,7 +367,9 @@ async function handleSearch() {
 
     scores.sort((a, b) => b.similarity - a.similarity); // Sort by similarity
 
-    displayTopResults(scores); // Display top results
+    currentPage = 1; // Reset to the first page
+    //displayTopResults(scores); // Display top results
+    displayPaginatedResults(scores);
 }
 
 // Add event listener for search button
