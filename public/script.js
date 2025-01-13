@@ -182,6 +182,74 @@ async function handleSearch() {
 // Add event listener for search button
 document.getElementById("searchButton").addEventListener("click", handleSearch);
 
+const servers = [
+    "http://localhost:5000",
+    "http://localhost:5001",
+    "http://localhost:5002"
+];
+
+async function translateText(text) {
+    // Rotate through the servers to avoid hitting the same one repeatedly
+    const server = servers[Math.floor(Math.random() * servers.length)];
+
+    const response = await fetch(`${server}/translate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            q: text,
+            source: "auto",
+            target: "en",
+            format: "text",
+        }),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Translation failed: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.translatedText;
+}
+
+document.getElementById("translateButton").addEventListener("click", async () => {
+    console.log("Translate button clicked."); // Log to confirm the button is clicked
+
+    // Capture all visible text
+    const elements = Array.from(document.body.querySelectorAll("*")).filter((el) => {
+        return el.children.length === 0 && el.textContent.trim() !== ""; // Only leaf nodes with text
+    });
+
+    const texts = elements.map((el) => el.textContent.trim());
+
+    console.log("Texts to translate (captured from DOM):", texts); // Log the texts to be translated
+
+    try {
+        console.log("Sending texts to backend for translation..."); // Log before sending the request
+        const response = await fetch("/translate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ texts }), // Send texts to be translated
+        });
+
+        console.log("Response received from backend:", response.status); // Log the HTTP status of the response
+
+        const data = await response.json();
+
+        if (data.translatedTexts) {
+            console.log("Translated texts received from backend:", data.translatedTexts); // Log translated texts
+            // Update the text content with translations
+            data.translatedTexts.forEach((translatedText, i) => {
+                elements[i].textContent = translatedText;
+            });
+        } else {
+            console.error("Translation failed. Backend error:", data.error); // Log backend error message
+        }
+    } catch (err) {
+        console.error("Error during translation request:", err); // Log any network or fetch errors
+    }
+});
+
+
 // Initialize application on page load
 (async function initialize() {
     try {
