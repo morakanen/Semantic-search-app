@@ -21,7 +21,8 @@
 
     <!-- Main Content Section -->
     <main role="main">
-        <div class="history-dropdown">
+        <!-- History html -->
+        <div class="history-dropdown"> 
             <button id="historyButton" class="history-button" aria-expanded="false" aria-haspopup="true">
                 Search History
             </button>
@@ -31,6 +32,7 @@
             </div>
         </div> 
         
+        <!-- Search feature html -->
         <section id="search-section" aria-labelledby="search-section-heading">
             <h2 id="search-section-heading">Search for News</h2>
             <label for="searchQuery" class="visually-hidden">Enter search query</label>
@@ -44,6 +46,7 @@
             </p>
             <div class="button-group">
                 <button id="searchButton" aria-label="Search for news articles">Search</button>
+                <!-- Button for translation -->
                 <button id="translateButton" aria-label="Translate the results">Translate</button>
             </div>
         </section>
@@ -56,7 +59,7 @@
             <div id="paginationControls" style="text-align: center; margin-top: 20px;"></div>
         </section>
 
-
+<!-- Aria has been added to help screen readers  -->
 
     </main>
 
