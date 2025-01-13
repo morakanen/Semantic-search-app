@@ -71,9 +71,9 @@ function displayTopResults(scores) {
         const title = originalItem.title || "No Title Available";
         const author = originalItem.creator || "Unknown Author";
 
-        // Create a card container
+        // Creates a card container
         const card = document.createElement("div");
-        card.className = "result-card"; // Add CSS class for styling
+        card.className = "result-card"; // Adds CSS class for styling
         card.style.border = "1px solid #ccc";
         card.style.margin = "10px";
         card.style.padding = "15px";
@@ -82,7 +82,7 @@ function displayTopResults(scores) {
         card.style.transition = "0.3s all ease";
         card.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
 
-        // Add initial content (title and author)
+        // Adds initial content (title and author)
         const cardTitle = document.createElement("h3");
         cardTitle.textContent = `Title: ${title}`;
         card.appendChild(cardTitle);
@@ -95,12 +95,12 @@ function displayTopResults(scores) {
         similarityScore.textContent = `Similarity: ${similarity.toFixed(2)}`;
         card.appendChild(similarityScore);
 
-        // Add hidden section for metadata
+        // Adds hidden section for metadata
         const additionalInfo = document.createElement("div");
         additionalInfo.style.display = "none"; // Initially hidden
         additionalInfo.style.marginTop = "10px";
 
-        // Populate the hidden section with all metadata fields
+        // Populates the hidden section with all metadata fields
         Object.keys(originalItem).forEach(key => {
             const value = originalItem[key];
             if (value) {
@@ -112,13 +112,13 @@ function displayTopResults(scores) {
 
         card.appendChild(additionalInfo);
 
-        // Toggle visibility of metadata when the card is clicked
+        // Toggles visibility of metadata when the card is clicked
         card.addEventListener("click", () => {
             additionalInfo.style.display =
                 additionalInfo.style.display === "none" ? "block" : "none";
         });
 
-        // Append the card to the results container
+        // Adds the card to the results container
         resultsDiv.appendChild(card);
     });
 }
