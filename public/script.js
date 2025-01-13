@@ -338,13 +338,22 @@ function renderHistory() {
 
 
 historyButton.addEventListener('click', () => {
-    const isVisible = historyDropdown.classList.contains('visible');
-    historyDropdown.classList.toggle('visible', !isVisible);
-
-    if (!isVisible) {
-        renderHistory(); // Render the history list when opening
+    if (historyDropdown.classList.contains('visible')) {
+        // Hide the dropdown
+        historyDropdown.classList.remove('visible');
+        setTimeout(() => {
+            historyDropdown.style.display = 'none'; // Fully hide after animation
+        }, 300); // Match the CSS transition duration
+    } else {
+        // Show the dropdown
+        historyDropdown.style.display = 'flex'; // Make dropdown visible
+        setTimeout(() => {
+            historyDropdown.classList.add('visible'); // Trigger slide-in animation
+        }, 10); // Small delay to ensure display is applied
+        renderHistory(); // Render history list when opening
     }
 });
+
 
 clearHistoryButton.addEventListener('click', () => {
     searchHistory = []; // Clear the history array
