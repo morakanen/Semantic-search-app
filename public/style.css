@@ -43,6 +43,11 @@ html, body {
     color: var(--text);
 }
 
+h2{
+    font-size: 35px;
+    font-weight: bold;
+}
+
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Header ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */ 
 
 header {
@@ -102,7 +107,7 @@ main {
     align-items: center;
     text-align: center;
     width: 100%;
-    padding-bottom: 50px; /* Prevent footer overlap */
+    padding-bottom: 0px; /* Prevent footer overlap */
     margin-top: calc(var(--header-height, 130px)); /* Adjust to the header's height */
 }
 
@@ -169,21 +174,137 @@ button:active {
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Results ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */ 
 
-#results-section {
-    width: 80%;
-    max-width: 800px;
-    text-align: center;
-    padding: 20px;
-    border-radius: 8px;
-    background-color: var(--input-bg);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+/* Parent container style to center cards */
+/* Parent container background */
+#results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 10vh;
+    margin: 0;
+    padding-bottom: 20px;
 }
 
-.results-container h2 {
-    margin-top: 0;
-    font-size: 1.5rem;
-    font-weight: var(--font-weight-bold);
-    color: var(--text);
+/* Result card styling */
+.result-card {
+    background-color: #f8f9fa; /* Light grey background */
+    border: 1px solid #ccc;
+    margin: 10px;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 1000px;
+    text-align: center;
+}
+
+.result-card.dark-mode {
+    background-color: #1e1e1e; /* Dark card background */
+    color: #e0e0e0; /* Light text for readability */
+    border: 1px solid #333; /* Darker border */
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+.result-card.dark-mode:hover {
+    background-color: #2a2a2a; /* Slightly lighter for hover */
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+}
+
+/* Hover effect for a subtle color shift */
+.result-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #f0f8ff; /* Light blue for hover */
+}
+
+
+/* Hidden and expanded sections */
+.result-card div {
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.result-card div.collapsed {
+    max-height: 0;
+    opacity: 0;
+}
+
+.result-card div.expanded {
+    max-height: 10000px;/* Adjust based on expected content size */
+    opacity: 1;
+}
+
+.result-card .title {
+    color: #0056b3; /* Blue for titles in light mode */
+}
+
+.result-card .author {
+    color: #6c757d; /* Grey for authors */
+}
+
+.result-card .similarity {
+    color: #28a745; /* Green for similarity */
+}
+
+.result-card .links a {
+    color: #007bff; /* Blue for links in light mode */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.result-card .links a:hover {
+    text-decoration: underline;
+    color: #0056b3; /* Darker blue on hover */
+}
+
+.result-card .additional-info {
+    color: #555; /* Subtle grey for metadata */
+}
+
+/* Dark Mode */
+body.dark-mode {
+    background-color: #121212; /* Dark grey background */
+    color: #e0e0e0; /* Light text */
+}
+
+.result-card.dark-mode {
+    background-color: #1e1e1e; /* Dark card background */
+    color: #e0e0e0; /* Light text for all elements */
+    border: 1px solid #333;
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+/* Title in dark mode */
+.result-card.dark-mode .title {
+    color: #66b2ff; /* Light blue for titles in dark mode */
+}
+
+/* Author in dark mode */
+.result-card.dark-mode .author {
+    color: #a0a0a0; /* Lighter grey for authors */
+}
+
+/* Similarity in dark mode */
+.result-card.dark-mode .similarity {
+    color: #90ee90; /* Light green for similarity */
+}
+
+/* Links in dark mode */
+.result-card.dark-mode .links a {
+    color: #66b2ff; /* Light blue for links */
+}
+
+.result-card.dark-mode .links a:hover {
+    color: #3399ff; /* Slightly darker blue on hover */
+    text-decoration: underline;
+}
+
+/* Additional info in dark mode */
+.result-card.dark-mode .additional-info {
+    color: #cccccc; /* Lighter grey for additional metadata */
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Footer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */ 
