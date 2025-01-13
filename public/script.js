@@ -14,7 +14,7 @@ document.querySelectorAll('button').forEach((button) => {
 });
 
 
-const header = document.querySelector('.header');
+const header = document.querySelector('.header'); 
 let lastScrollPos = 0;
 
 function handleScroll() {
@@ -23,9 +23,9 @@ function handleScroll() {
 
     if (Math.abs(currentScrollPos - lastScrollPos) > scrollThreshold) {
         if (currentScrollPos > lastScrollPos) {
-            header.classList.add('header-hidden');
+            header.classList.add('header-hidden'); //header will dissapear when scrolling down
         } else {
-            header.classList.remove('header-hidden');
+            header.classList.remove('header-hidden'); // header will reappear when scrolling up
         }
         lastScrollPos = currentScrollPos;
     }
@@ -668,7 +668,11 @@ document.addEventListener('DOMContentLoaded', () => {
 // Initialize application on page load
 (async function initialize() {
     try {
+<<<<<<< HEAD
         //await clearOldEmbeddings()
+=======
+/*         await clearOldEmbeddings() */
+>>>>>>> f7803a4061c5a4c03f06ed508c7d88a14d3916a9
         await loadModelAndPrepareDataset(); // Load model and prepare dataset
     } catch (error) {
         console.error("Error initializing application:", error.message);

@@ -21,6 +21,8 @@ app.get('/dataset.json', (req, res) => {
     }
 });
 
+
+// allows the code to be translated to the server and back
 app.post("/translate", async (req, res) => {
     const { texts } = req.body;
 

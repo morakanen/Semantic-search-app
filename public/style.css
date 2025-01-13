@@ -467,156 +467,161 @@ footer a:hover {
 }
 
 
-/* Responsive adjustments for screens smaller than 768px (tablets and phones) */
+@media (max-width: 900px){
+    .toggleTheme{
+        width: 100px;
+        font-size: 16px;
+    }
+}
+
+/* Responsive adjustments for screens smaller than 768px */
 @media (max-width: 768px) {
-    /* General font size adjustments */
     html, body {
-        font-size: 14px; /* Slightly smaller base font size */
+        font-size: 18px;
     }
 
-    /* Header adjustments */
+    .toggleTheme{
+        width: 100px;
+        font-size: 16px;
+    }
+
     header {
         padding: 10px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
     }
 
     .headerContanor {
-        flex-wrap: wrap; /* Allow items to wrap on smaller screens */
-        justify-content: space-between; /* Distribute space more evenly */
+        flex-wrap: wrap;
+        justify-content: space-between;
         padding: 10px;
     }
 
     .headerText {
-        font-size: 1.8rem; /* Reduce font size for smaller devices */
+        font-size: 1.8rem;
         padding: 10px 0;
     }
 
     .toggleTheme {
-        right: 10px; /* Adjust position for smaller screens */
+        right: 10px;
     }
 
-    /* Main content adjustments */
     main {
         padding: 10px;
-        margin-top: calc(var(--header-height, 60px)); /* Adjust for smaller header height */
+        margin-top: calc(var(--header-height, 60px));
     }
 
     #search-section h2 {
-        font-size: 1.5rem; /* Reduce size for mobile */
+        font-size: 1.5rem;
     }
 
     input {
-        width: 90%; /* Full width with padding for smaller screens */
-        font-size: 1rem; /* Adjust font size */
+        width: 90%;
+        font-size: 1rem;
     }
 
     button {
-        font-size: 0.9rem; /* Slightly smaller button text */
-        padding: 10px 20px; /* Adjust padding for smaller buttons */
+        font-size: 0.9rem;
+        padding: 10px 20px;
     }
 
-    /* Results section adjustments */
     #results {
         padding: 10px;
     }
 
     .result-card {
-        width: 90%; /* Full width with some margin */
-        max-width: 100%; /* Ensure cards don't exceed screen width */
-        text-align: left; /* Align text to the left for better readability */
-        padding: 10px; /* Reduce padding for smaller cards */
-        font-size: 0.9rem; /* Adjust text size */
+        width: 90%;
+        max-width: 100%;
+        text-align: left;
+        padding: 10px;
+        font-size: 0.9rem;
     }
 
     .result-card .title {
-        font-size: 1.2rem; /* Reduce title size */
+        font-size: 1.2rem;
     }
 
     .result-card .author,
     .result-card .similarity {
-        font-size: 1rem; /* Adjust font sizes for details */
+        font-size: 1rem;
     }
 
     .result-card .links a {
-        font-size: 0.9rem; /* Adjust link text size */
+        font-size: 0.9rem;
     }
 
-    /* Footer adjustments */
     footer {
-        font-size: 0.8rem; /* Smaller text for footer */
-        padding: 10px 0; /* Reduce padding */
-    }
-}
-
-/* Further adjustments for very small screens (max-width: 480px) */
-@media (max-width: 480px) {
-    .headerText {
-        font-size: 1.5rem; /* Further reduce header text size */
+        font-size: 0.8rem;
+        padding: 10px 0;
     }
 
-    input {
-        width: 100%; /* Full width input for small screens */
-    }
-
-    button {
-        font-size: 0.8rem; /* Smaller button text */
-        padding: 8px 15px; /* Compact button padding */
-    }
-
-    .result-card {
-        padding: 8px; /* Further reduce padding */
-    }
-
-    .result-card .title {
-        font-size: 1rem; /* Compact title size */
-    }
-
-    .result-card .author,
-    .result-card .similarity {
-        font-size: 0.9rem; /* Compact detail size */
-    }
-}
-/* Adjustments for screens smaller than 768px */
-@media (max-width: 768px) {
     .history-dropdown {
-        width: 80px; /* Make dropdown full-width on smaller screens */
-        top: 120px; /* Adjust positioning for smaller header */
-        right: 0; /* Align to the right edge */
-        padding: 5x; /* Add padding for better spacing */
+        width: 80px;
+        top: 120px;
+        right: 0;
+        padding: 5px;
         font-size: 14px;
     }
 
     .history-button {
-        font-size: 1rem; /* Adjust button font size */
-        padding: 8px 10px; /* Compact padding */
-        width: 90%; /* Full width with margin */
-        margin: 0 auto; /* Center align */
+        font-size: 1rem;
+        padding: 8px 10px;
+        width: 90%;
+        margin: 0 auto;
     }
 
     .history-list-container {
-        width: 90%; /* Adjust dropdown container width */
-        left: 5%; /* Center it horizontally */
-        right: unset; /* Reset right position */
-        top: 120px; /* Adjust positioning relative to the button */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Softer shadow */
+        width: 90%;
+        left: 5%;
+        right: unset;
+        top: 120px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
     .history-list {
-        max-height: 100px; /* Reduce height to fit smaller screens */
-        font-size: 0.9rem; /* Adjust font size */
-        gap: 5px; /* Reduce gap between items */
+        max-height: 100px;
+        font-size: 0.9rem;
+        gap: 5px;
     }
 
     .history-list li {
-        font-size: 0.9rem; /* Adjust font size for list items */
-        padding: 5px; /* Compact padding */
-        width: 100%; /* Full width */
+        font-size: 0.9rem;
+        padding: 5px;
+        width: 100%;
     }
 
     .clear-history-button {
-        font-size: 0.9rem; /* Adjust font size */
-        padding: 8px; /* Compact padding */
-        width: 100%; /* Match width of list items */
+        font-size: 0.9rem;
+        padding: 8px;
+        width: 100%;
+    }
+}
+
+/* Adjustments for very small screens (max-width: 480px) */
+@media (max-width: 480px) {
+    .headerText {
+        font-size: 1.5rem;
+    }
+
+    input {
+        width: 100%;
+    }
+
+    button {
+        font-size: 0.8rem;
+        padding: 8px 15px;
+    }
+
+    .result-card {
+        padding: 8px;
+    }
+
+    .result-card .title {
+        font-size: 1rem;
+    }
+
+    .result-card .author,
+    .result-card .similarity {
+        font-size: 0.9rem;
     }
 }
 
