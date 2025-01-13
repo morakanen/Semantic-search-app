@@ -165,31 +165,50 @@ function updatePaginationControls(scores) {
     const totalPages = Math.ceil((scores.length - 10) / RESULTS_PER_PAGE) + 1; // Total pages including top 10
     paginationControls.innerHTML = ""; // Clear previous controls
 
-    // Create Previous Button
-    const prevButton = document.createElement("button");
-    prevButton.textContent = "Previous";
-    if (currentPage == 1) {
-        prevButton.style.visibility = "hidden";
-    }
-    prevButton.disabled = currentPage === 1; // Disable on the first page
-    prevButton.onclick = () => {
-        if (currentPage > 1) {
-            currentPage--;
-            displayPaginatedResults(scores);
-        }
-    };
-    paginationControls.appendChild(prevButton);
+  // Create Previous Button
+const prevButton = document.createElement("button");
+prevButton.textContent = "Previous";
 
-    // Create Next Button
-    const nextButton = document.createElement("button");
-    nextButton.textContent = "Next";
-    nextButton.disabled = currentPage >= totalPages; // Disable on the last page
-    nextButton.onclick = () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-            displayPaginatedResults(scores);
+// Apply visually-hidden class if on the first page
+if (currentPage === 1) {
+    prevButton.classList.add("visually-hidden");
+} else {
+    prevButton.classList.remove("visually-hidden");
+}
+
+prevButton.disabled = currentPage === 1; // Disable on the first page
+prevButton.onclick = () => {
+    if (currentPage > 1) {
+        currentPage--;
+        displayPaginatedResults(scores);
+
+        // Show the button again if not on the first page
+        if (currentPage > 1) {
+            prevButton.classList.remove("visually-hidden");
         }
-    };
+    }
+};
+paginationControls.appendChild(prevButton);
+
+// Create Next Button
+const nextButton = document.createElement("button");
+nextButton.textContent = "Next";
+nextButton.disabled = currentPage >= totalPages; // Disable on the last page
+nextButton.onclick = () => {
+    if (currentPage < totalPages) {
+        currentPage++;
+        displayPaginatedResults(scores);
+
+        // Add the visually-hidden class if reaching the last page
+        if (currentPage >= totalPages) {
+            nextButton.classList.add("visually-hidden");
+        } else {
+            nextButton.classList.remove("visually-hidden");
+        }
+    }
+};
+paginationControls.appendChild(nextButton);
+
     paginationControls.appendChild(nextButton);
 
     console.log("Pagination controls updated.");
