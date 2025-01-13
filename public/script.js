@@ -668,11 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Initialize application on page load
 (async function initialize() {
     try {
-<<<<<<< HEAD
         //await clearOldEmbeddings()
-=======
-/*         await clearOldEmbeddings() */
->>>>>>> f7803a4061c5a4c03f06ed508c7d88a14d3916a9
         await loadModelAndPrepareDataset(); // Load model and prepare dataset
     } catch (error) {
         console.error("Error initializing application:", error.message);
