@@ -4,6 +4,40 @@ let dataset = []; // Dataset array
 let datasetEmbeddings; // Array of embeddings with precomputed magnitudes
 const TOP_N = 10; 
 
+
+document.querySelectorAll('button').forEach((button) => {
+    button.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent triggering other event listeners
+    });
+});
+
+
+const header = document.querySelector('.header');
+let lastScrollPos = 0;
+
+function handleScroll() {
+    const currentScrollPos = window.scrollY;
+    const scrollThreshold = 5; // Minimum scroll distance to trigger the behavior
+
+    if (Math.abs(currentScrollPos - lastScrollPos) > scrollThreshold) {
+        if (currentScrollPos > lastScrollPos) {
+            header.classList.add('header-hidden');
+        } else {
+            header.classList.remove('header-hidden');
+        }
+        lastScrollPos = currentScrollPos;
+    }
+}
+
+// Toggle the header-hidden class on scroll or click
+header.addEventListener('click', () => {
+    if (header.classList.contains('header-hidden')) {
+        header.classList.remove('header-hidden');
+    }
+});
+
+window.addEventListener('scroll', handleScroll);
+
 // Fetch dataset from JSON file
 async function fetchDataset() {
     console.log("Fetching dataset...");
@@ -145,7 +179,7 @@ async function handleSearch() {
         alert("Please enter a search query.");
         return;
     }
-
+    saveHistory(query); // Save the search query to history
     console.log(`Searching for: ${query}`);
     const queryEmbedding = (await model.embed([query])).arraySync()[0]; // Embed query
 
@@ -229,6 +263,117 @@ document.getElementById("translateButton").addEventListener("click", async () =>
         console.error("Error during translation request:", err); // Log any network or fetch errors
     }
 });
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleThemeButton = document.getElementById('toggleThemeButton');
+    toggleThemeButton.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        toggleThemeButton.textContent = document.body.classList.contains('dark-mode') 
+            ? 'Switch to Light Mode' 
+            : 'Switch to Dark Mode';
+    });
+});
+
+
+
+const mainElement = document.querySelector('main');
+const resultsSection = document.getElementById('results-section');
+
+// Observe changes to the #results-section
+const observer = new MutationObserver(() => {
+    // Add the "expanded" class to the main element
+    if (!mainElement.classList.contains('expanded')) {
+        mainElement.classList.add('expanded');
+    }
+});
+
+// Start observing the results section for changes
+observer.observe(resultsSection, { childList: true, subtree: true });
+
+
+
+const historyButton = document.getElementById('historyButton');
+const historyDropdown = document.getElementById('historyDropdown');
+const historyList = document.getElementById('historyList');
+const clearHistoryButton = document.getElementById('clearHistoryButton');
+
+// Load search history from localStorage
+let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+
+
+function toggleHistoryButton() {
+    const historyButton = document.getElementById('historyButton');
+    if (searchHistory.length > 0) {
+        historyButton.style.display = 'block'; // Show the button if history exists
+    } else {
+        historyButton.style.display = 'none'; // Hide the button if no history
+    }
+}
+
+
+function renderHistory() {
+    historyList.innerHTML = ''; // Clear existing list
+
+    // Populate the list with search history
+    if (searchHistory.length > 0) {
+        searchHistory.forEach((query) => {
+            const li = document.createElement('li');
+            li.textContent = query;
+            li.addEventListener('click', () => {
+                document.getElementById('searchQuery').value = query; // Populate search box
+                document.getElementById('searchButton').click(); // Trigger search
+            });
+            historyList.appendChild(li);
+        });
+        clearHistoryButton.style.display = 'block'; // Show the "Clear History" button
+    } else {
+        clearHistoryButton.style.display = 'none'; // Hide the "Clear History" button if no history
+    }
+
+    toggleHistoryButton(); // Ensure "Search History" button visibility is updated
+}
+
+
+
+
+historyButton.addEventListener('click', () => {
+    const isVisible = historyDropdown.classList.contains('visible');
+    historyDropdown.classList.toggle('visible', !isVisible);
+
+    if (!isVisible) {
+        renderHistory(); // Render the history list when opening
+    }
+});
+
+clearHistoryButton.addEventListener('click', () => {
+    searchHistory = []; // Clear the history array
+    localStorage.removeItem('searchHistory'); // Clear from localStorage
+    renderHistory(); // Update the dropdown
+    historyDropdown.classList.remove('visible'); // Hide the dropdown
+});
+
+
+function saveHistory(query) {
+    if (query && !searchHistory.includes(query)) {
+        searchHistory.unshift(query); // Add to the beginning of the array
+        if (searchHistory.length > 10) {
+            searchHistory.pop(); // Limit to the last 10 searches
+        }
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory)); // Save to localStorage
+
+        renderHistory(); // Update the dropdown list
+        toggleHistoryButton(); // Ensure the "Search History" button is updated
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderHistory(); // Render the initial history dropdown
+    toggleHistoryButton(); // Ensure the "Search History" button is shown/hidden
+});
+
+
 
 
 // Initialize application on page load
