@@ -625,3 +625,190 @@ footer a:hover {
     }
 }
 
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Preloader ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */ 
+
+/* Preloader container */
+.preloader {
+    position: fixed; /* Ensures it covers the entire viewport */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgb(255, 255, 255); /* Slightly opaque white background */
+    z-index: 9999; /* Ensures it is above everything else */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Circles in the preloader */
+  .circle {
+    position: absolute;
+    border: 4px solid transparent;
+    border-radius: 50%;
+    animation: spin 1.5s linear infinite;
+  }
+
+  .circle.one {
+    width: 80px;
+    height: 80px;
+    border-top: 4px solid #007bff;
+  }
+
+  .circle.two {
+    width: 60px;
+    height: 60px;
+    border-top: 4px solid #00c853;
+    animation-duration: 2s;
+  }
+
+  .circle.three {
+    width: 40px;
+    height: 40px;
+    border-top: 4px solid #ff6f00;
+    animation-duration: 2.5s;
+  }
+
+  /* Keyframes for default rotation */
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Hide preloader after animation */
+  .loaded {
+    display: none;
+  }
+
+  /* Responsive adjustments for screens smaller than 768px (tablets and phones) */
+@media (max-width: 768px) {
+    /* General font size adjustments */
+    html, body {
+        font-size: 14px; /* Slightly smaller base font size */
+    }
+    /* Header adjustments */
+    header {
+        padding: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    }
+    .headerContanor {
+        flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+        justify-content: space-between; /* Distribute space more evenly */
+        padding: 10px;
+    }
+    .headerText {
+        font-size: 1.8rem; /* Reduce font size for smaller devices */
+        padding: 10px 0;
+    }
+    .toggleTheme {
+        right: 10px; /* Adjust position for smaller screens */
+    }
+    /* Main content adjustments */
+    main {
+        padding: 10px;
+        margin-top: calc(var(--header-height, 60px)); /* Adjust for smaller header height */
+    }
+    #search-section h2 {
+        font-size: 1.5rem; /* Reduce size for mobile */
+    }
+    input {
+        width: 90%; /* Full width with padding for smaller screens */
+        font-size: 1rem; /* Adjust font size */
+    }
+    button {
+        font-size: 0.9rem; /* Slightly smaller button text */
+        padding: 10px 20px; /* Adjust padding for smaller buttons */
+    }
+    /* Results section adjustments */
+    #results {
+        padding: 10px;
+    }
+    .result-card {
+        width: 90%; /* Full width with some margin */
+        max-width: 100%; /* Ensure cards don't exceed screen width */
+        text-align: left; /* Align text to the left for better readability */
+        padding: 10px; /* Reduce padding for smaller cards */
+        font-size: 0.9rem; /* Adjust text size */
+    }
+    .result-card .title {
+        font-size: 1.2rem; /* Reduce title size */
+    }
+    .result-card .author,
+    .result-card .similarity {
+        font-size: 1rem; /* Adjust font sizes for details */
+    }
+    .result-card .links a {
+        font-size: 0.9rem; /* Adjust link text size */
+    }
+    /* Footer adjustments */
+    footer {
+        font-size: 0.8rem; /* Smaller text for footer */
+        padding: 10px 0; /* Reduce padding */
+    }
+}
+/* Further adjustments for very small screens (max-width: 480px) */
+@media (max-width: 480px) {
+    .headerText {
+        font-size: 1.5rem; /* Further reduce header text size */
+    }
+    input {
+        width: 100%; /* Full width input for small screens */
+    }
+    button {
+        font-size: 0.8rem; /* Smaller button text */
+        padding: 8px 15px; /* Compact button padding */
+    }
+    .result-card {
+        padding: 8px; /* Further reduce padding */
+    }
+    .result-card .title {
+        font-size: 1rem; /* Compact title size */
+    }
+    .result-card .author,
+    .result-card .similarity {
+        font-size: 0.9rem; /* Compact detail size */
+    }
+}
+/* Adjustments for screens smaller than 768px */
+@media (max-width: 768px) {
+    .history-dropdown {
+        width: 80px; /* Make dropdown full-width on smaller screens */
+        top: 120px; /* Adjust positioning for smaller header */
+        right: 0; /* Align to the right edge */
+        padding: 5x; /* Add padding for better spacing */
+        font-size: 14px;
+    }
+    .history-button {
+        font-size: 1rem; /* Adjust button font size */
+        padding: 8px 10px; /* Compact padding */
+        width: 90%; /* Full width with margin */
+        margin: 0 auto; /* Center align */
+    }
+    .history-list-container {
+        width: 90%; /* Adjust dropdown container width */
+        left: 5%; /* Center it horizontally */
+        right: unset; /* Reset right position */
+        top: 120px; /* Adjust positioning relative to the button */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Softer shadow */
+    }
+    .history-list {
+        max-height: 100px; /* Reduce height to fit smaller screens */
+        font-size: 0.9rem; /* Adjust font size */
+        gap: 5px; /* Reduce gap between items */
+    }
+    .history-list li {
+        font-size: 0.9rem; /* Adjust font size for list items */
+        padding: 5px; /* Compact padding */
+        width: 100%; /* Full width */
+    }
+    .clear-history-button {
+        font-size: 0.9rem; /* Adjust font size */
+        padding: 8px; /* Compact padding */
+        width: 100%; /* Match width of list items */
+    }
+}
